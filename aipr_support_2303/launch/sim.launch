@@ -1,0 +1,23 @@
+<launch>
+
+    <arg name="gui" default="true" />
+    <arg name="rvizconfig" default="$(find aipr_support_2303)/rviz/demo.rviz" />
+
+    <include file="$(find mecademic_description)/launch/meca_500_r3.launch"/>
+    
+    <node if="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui">
+        <rosparam param="/source_list">[cmd/joint_position]</rosparam>
+    </node>
+    <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <rosparam param="/source_list">[cmd/joint_position]</rosparam>
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+
+    <!-- EXTRA NODES -->
+    <node name="human_tf_broadcaster" pkg="aipr_support_2303" type="human_tf_broadcaster" required="true" output="screen">
+        <param name="base_link" type="string" value="meca_base_link" />
+    </node>
+
+</launch>
